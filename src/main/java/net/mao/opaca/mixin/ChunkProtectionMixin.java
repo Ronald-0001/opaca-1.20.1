@@ -69,6 +69,24 @@ public abstract class ChunkProtectionMixin {
     }
 
     @Inject(
+            method = "hasChunkAccess",
+            at = @At("HEAD"),
+            cancellable = true,
+            remap = false
+    )
+    private void hasChunkAccessMixin(
+            IPlayerConfigAPI claimConfig, Entity accessor, UUID accessorId, CallbackInfoReturnable<Boolean> cir) {
+        if (OPACAdditions.Debug()) OPACAdditions.LOGGER.info("hasChunkAccessMixin triggered successfully!"); // will spam
+        boolean isAServerPlayer = accessor instanceof ServerPlayer;
+        if (isAServerPlayer) {
+            ServerPlayer player = ((ServerPlayer) accessor);
+            if (!isWorldProtected(player.level().dimension().location())) cir.setReturnValue(true);
+        }
+    }
+
+    /*
+
+    @Inject(
             method = "hasChunkAccess(Lxaero/pac/common/server/config/IPlayerConfigAPI;Lnet/minecraft/world/entity/Entity;Ljava/util/UUID;)Z",
             at = @At("HEAD"),
             cancellable = true
@@ -107,5 +125,7 @@ public abstract class ChunkProtectionMixin {
         if (OPACAdditions.Debug()) OPACAdditions.LOGGER.info("onBlockInteractionMixin triggered successfully!");
         if (!isWorldProtected(world)) cir.setReturnValue(false); // stop the function
     }
+
+    */
 
 }
